@@ -934,29 +934,8 @@
 </footer>
 
 <script>
-  const TOKEN = 'LL5NLpjnj7y1r1qRoPQjrvNyap3BOWwNiU6EPgVtkDv3wkOgCPc';
-  const BASE  = 'https://api.pandascore.co/csgo';
-  const PH    = 'https://placehold.co/60x60/1a1a1a/555?text=?';
-
-  const PROXIES = [
-    u => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
-    u => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,
-    u => `https://thingproxy.freeboard.io/fetch/${u}`,
-  ];
-
-  async function apiFetch(url) {
-    try {
-      const res = await fetch(url, { signal: AbortSignal.timeout(6000) });
-      if (res.ok) return res;
-    } catch { /* CORS null-origin (file://) — tenta proxies */ }
-    for (const p of PROXIES) {
-      try {
-        const res = await fetch(p(url), { signal: AbortSignal.timeout(8000) });
-        if (res.ok) return res;
-      } catch { continue; }
-    }
-    throw new Error('API inacessível. Abra via servidor local para melhor desempenho.');
-  }
+  const BASE = '/api/pandascore';
+  const PH   = 'https://placehold.co/60x60/1a1a1a/555?text=?';
 
   // ── TEAMS SECTION ────────────────────────────
   const ALL_TEAMS = [];
@@ -1027,8 +1006,8 @@
     }
 
     try {
-      const url = `${BASE}/teams?per_page=50&page=${teamsPage}&token=${TOKEN}`;
-      const res = await apiFetch(url);
+      const url = `${BASE}?path=teams&per_page=50&page=${teamsPage}`;
+      const res = await fetch(url);
       if (!res.ok) throw new Error(res.status);
       const teams = await res.json();
 
@@ -1181,8 +1160,8 @@
 
   async function fetchTeams(q, n) {
     try {
-      const url = `${BASE}/teams?search[name]=${encodeURIComponent(q)}&page[size]=8&token=${TOKEN}`;
-      const res = await apiFetch(url);
+      const url = `${BASE}?path=teams&search[name]=${encodeURIComponent(q)}&page[size]=8`;
+      const res = await fetch(url);
       if (!res.ok) throw new Error(res.status);
       renderDd(await res.json(), n);
     } catch (e) {
@@ -1294,8 +1273,8 @@
   }
 
   async function getMatches(teamId) {
-    const url = `${BASE}/matches?filter[opponent_id]=${teamId}&filter[status]=finished&sort=-scheduled_at&page[size]=20&token=${TOKEN}`;
-    const res = await apiFetch(url);
+    const url = `${BASE}?path=matches&filter[opponent_id]=${teamId}&filter[status]=finished&sort=-scheduled_at&page[size]=20`;
+    const res = await fetch(url);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return res.json();
   }
