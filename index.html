@@ -270,6 +270,12 @@
     }
     .search-input:focus { border-color: var(--primary); }
     .search-input::placeholder { color: var(--muted); }
+    .search-input.error { border-color: #e53e3e; animation: shake 0.35s ease; }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      25%      { transform: translateX(-5px); }
+      75%      { transform: translateX(5px); }
+    }
 
     .dropdown {
       position: absolute;
@@ -307,7 +313,7 @@
     .selected-pill.show { display: flex; }
     .selected-pill.t2 { background: var(--secondary-a); border-left-color: var(--secondary); }
     .selected-pill img { width: 24px; height: 24px; object-fit: contain; }
-    .selected-pill-name { font-weight: 600; font-size: 0.85rem; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .selected-pill-name { font-weight: 600; font-size: 0.85rem; flex: 1; max-width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .clear-btn {
       background: none; border: none; color: var(--muted);
       cursor: pointer; font-size: 0.9rem; line-height: 1;
@@ -362,6 +368,23 @@
     /* ── RESULTS ────────────────────────────── */
     .results { display: none; }
     .results.show { display: block; }
+
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 8px 16px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      letter-spacing: 1px;
+      cursor: pointer;
+      margin-bottom: 20px;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .back-btn:hover { border-color: var(--primary); color: var(--primary); }
 
     .matchup {
       display: grid;
@@ -559,6 +582,11 @@
       .tci-name { font-size: 0.62rem; }
       .tp-predict { padding: 11px 14px; letter-spacing: 1px; font-size: 0.8rem; }
     }
+    @media (max-width: 700px) and (min-width: 561px) {
+      .tp-wrap { padding: 10px 12px; }
+      .tp-grid { gap: 6px; }
+      .search-input { font-size: 0.82rem; }
+    }
     @media (max-width: 560px) {
       .tp-grid { grid-template-columns: 1fr auto 1fr; }
       .tp-predict { display: none; }
@@ -569,12 +597,17 @@
       .h2h-row { grid-template-columns: 1fr 80px 1fr; }
       .players-grid { grid-template-columns: 1fr; }
       .player-panel { border-right: none; border-bottom: 1px solid var(--border); }
+      .selected-pill-name { max-width: 90px; }
     }
     @media (min-width: 561px) {
       .tp-predict-mobile { display: none; }
     }
     @media (max-width: 400px) {
       .teams-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 380px) {
+      .tp-wrap { padding: 8px; }
+      .selected-pill-name { max-width: 60px; }
     }
 
     /* ── FOOTER ─────────────────────────────── */
@@ -839,6 +872,8 @@
 
   <!-- ── RESULTS ───────────────────────────── -->
   <div class="results" id="results">
+
+    <button class="back-btn" onclick="wipe()">← Nova predição</button>
 
     <div class="matchup">
       <div class="team-card" id="rc1">
@@ -1146,6 +1181,8 @@
   [1, 2].forEach(n => {
     const input = document.getElementById(`s${n}`);
     input.addEventListener('input', () => {
+      input.classList.remove('error');
+      hideErr();
       clearTimeout(debounce[n - 1]);
       const q = input.value.trim();
       if (q.length < 2) { closeDd(n); return; }
@@ -1230,12 +1267,18 @@
 
   function wipe() {
     document.getElementById('results').classList.remove('show');
+    document.querySelector('.teams-section').style.display = '';
     hideErr();
   }
 
   // ── PREDICT ─────────────────────────────────
   async function predict() {
-    if (!selected[0] || !selected[1]) return;
+    if (!selected[0] || !selected[1]) {
+      if (!selected[0]) shakeInput(1);
+      if (!selected[1]) shakeInput(2);
+      showErr('Selecione os dois times antes de prever.');
+      return;
+    }
     wipe();
     await runBattleAnimation();
     setLoading(true);
@@ -1379,6 +1422,7 @@
 
     renderPlayers(t1, t2);
 
+    document.querySelector('.teams-section').style.display = 'none';
     document.getElementById('results').classList.add('show');
     document.getElementById('results').scrollIntoView({ behavior:'smooth', block:'start' });
   }
@@ -1466,6 +1510,13 @@
     return String(s)
       .replace(/&/g,'&amp;').replace(/</g,'&lt;')
       .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function shakeInput(n) {
+    const inp = document.getElementById(`s${n}`);
+    inp.classList.remove('error');
+    void inp.offsetWidth; // força reflow para reiniciar animação
+    inp.classList.add('error');
   }
 
   function setLoading(on) { document.getElementById('loading').classList.toggle('show', on); }
