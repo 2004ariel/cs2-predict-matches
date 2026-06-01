@@ -575,7 +575,9 @@
     ::-webkit-scrollbar-thumb { background: #2a2a2a; }
     ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
+    /* ── RESPONSIVE ─────────────────────────── */
     @media (max-width: 700px) {
+      .container { padding: 28px 16px 48px; }
       .teams-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
       .tci { padding: 10px 6px 8px; }
       .tci img { width: 32px; height: 32px; }
@@ -588,16 +590,56 @@
       .search-input { font-size: 0.82rem; }
     }
     @media (max-width: 560px) {
-      .tp-grid { grid-template-columns: 1fr auto 1fr; }
+      /* header */
+      header { padding: 16px 0 12px; }
+      header p { letter-spacing: 2px; font-size: 0.62rem; }
+
+      /* container */
+      .container { padding: 20px 14px 40px; }
+
+      /* top predictor */
+      .tp-wrap { padding: 8px 12px; }
+      .tp-grid { grid-template-columns: 1fr auto 1fr; gap: 6px; }
+      .tp-vs { font-size: 0.85rem; padding: 0 2px; }
       .tp-predict { display: none; }
-      .tp-predict-mobile { display: block; width: 100%; margin-top: 10px; }
-      .matchup { grid-template-columns: 1fr; }
+      .tp-predict-mobile { display: block; width: 100%; margin-top: 8px; }
+      .search-input { padding: 9px 11px; font-size: 0.82rem; }
+      .selected-pill { padding: 5px 8px; gap: 6px; margin-top: 4px; }
+      .selected-pill img { display: none; }
+      .selected-pill-name { max-width: 100px; font-size: 0.78rem; }
+
+      /* teams toolbar */
+      .teams-search-wrap { flex-basis: 100%; min-width: 0; }
+      .region-filters { width: 100%; }
+      .region-btn { flex: 1; padding: 6px 8px; font-size: 0.62rem; }
+
+      /* results matchup */
+      .matchup { grid-template-columns: 1fr; gap: 8px; }
       .vs-label { display: none; }
-      .stat-row { grid-template-columns: 1fr 90px 1fr; }
-      .h2h-row { grid-template-columns: 1fr 80px 1fr; }
+      .team-card { padding: 18px 16px; }
+      .tc-prob { font-size: 1.8rem; }
+
+      /* probability bar labels */
+      .prob-labels .l1, .prob-labels .l2 {
+        max-width: 46%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      /* blocks */
+      .block-header { padding: 9px 14px; letter-spacing: 2px; font-size: 0.72rem; }
+      .stat-row { grid-template-columns: 1fr 90px 1fr; padding: 10px 14px; }
+      .h2h-row { grid-template-columns: 1fr 76px 1fr; padding: 10px 14px; gap: 4px; }
+      .h2h-center { min-width: 76px; }
+      .h2h-name { font-size: 0.78rem; }
+      .h2h-meta { font-size: 0.62rem; }
+
+      /* players */
       .players-grid { grid-template-columns: 1fr; }
       .player-panel { border-right: none; border-bottom: 1px solid var(--border); }
-      .selected-pill-name { max-width: 90px; }
+      .player-row { padding: 10px 14px; gap: 10px; }
+      .player-real { max-width: none; }
     }
     @media (min-width: 561px) {
       .tp-predict-mobile { display: none; }
@@ -606,8 +648,10 @@
       .teams-grid { grid-template-columns: repeat(2, 1fr); }
     }
     @media (max-width: 380px) {
-      .tp-wrap { padding: 8px; }
-      .selected-pill-name { max-width: 60px; }
+      .tp-wrap { padding: 8px 10px; }
+      .selected-pill-name { max-width: 72px; }
+      .sv { font-size: 1rem; }
+      .sk { font-size: 0.6rem; letter-spacing: 1px; }
     }
 
     /* ── FOOTER ─────────────────────────────── */
